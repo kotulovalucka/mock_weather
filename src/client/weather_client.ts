@@ -42,8 +42,8 @@ export class WeatherClient {
 		const url =
 			`${this.apiUrl}/locations/v1/cities/search?apikey=${this.apiKey}&q=${encodedQuery}&language=en&details=false`;
 		try {
-			LOG.debug(`Searching for location: ${name}`);
-			const response = await fetch(url, { signal: AbortSignal.timeout(5_000) });
+			LOG.debug(`Searching for location: ${name} in apiUrl: ${this.apiUrl}`);
+			const response = await fetch(url);
 			if (!response.ok) {
 				throw new HttpError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
@@ -53,7 +53,7 @@ export class WeatherClient {
 
 			const responseBody: unknown = await response.json();
 			const parsedResult = LocationSearchResponseSchema.safeParse(responseBody);
-			if (parsedResult.error) {
+			if (!parsedResult.success) {
 				LOG.error(`Failed to parse location data: ${parsedResult.error.errors}`);
 				throw new HttpError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
@@ -72,10 +72,13 @@ export class WeatherClient {
 				);
 			}
 
-			LOG.debug(`Location found for query: ${name}`);
+			LOG.debug(`Location found for query: ${name} with response data: ${JSON.stringify(data)}`);
 			return data;
 		} catch (error) {
 			LOG.error(`Error fetching location data for query: ${name}`, error);
+			if (error instanceof HttpError) {
+				throw error;
+			}
 			throw new HttpError(
 				StatusCodes.INTERNAL_SERVER_ERROR,
 				localizationUtil.getTranslation('errorMessages.weatherClient.locationFetch', language),
@@ -91,7 +94,7 @@ export class WeatherClient {
 			`${this.apiUrl}/forecasts/v1/daily/1day/${locationID}?apikey=${this.apiKey}&details=true&metric=true`;
 
 		try {
-			LOG.debug(`Fetching forecast for location ID: ${locationID}`);
+			LOG.debug(`Fetching forecast for location ID: ${locationID} in apiUrl: ${this.apiUrl}`);
 			const response = await fetch(url);
 
 			if (!response.ok) {
@@ -105,7 +108,7 @@ export class WeatherClient {
 
 			const responseBody: unknown = await response.json();
 			const parsedResult = LocationWeatherResponseSchema.safeParse(responseBody);
-			if (parsedResult.error) {
+			if (!parsedResult.success) {
 				LOG.error(`Failed to parse forecast data: ${parsedResult.error.errors}`);
 				throw new HttpError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
@@ -113,11 +116,18 @@ export class WeatherClient {
 				);
 			}
 			const data = parsedResult.data;
-			LOG.debug(`Forecast fetched for location ID: ${locationID}`);
+			LOG.debug(
+				`Forecast fetched for location ID: ${locationID} with response data: ${
+					JSON.stringify(data)
+				}`,
+			);
 
 			return data;
 		} catch (error) {
 			LOG.error(`Error fetching forecast for location ID: ${locationID}`, error);
+			if (error instanceof HttpError) {
+				throw error;
+			}
 			throw new HttpError(
 				StatusCodes.INTERNAL_SERVER_ERROR,
 				localizationUtil.getTranslation('errorMessages.weatherClient.weatherFetch', language),
