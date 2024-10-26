@@ -4,9 +4,10 @@ import { join } from 'node:path';
 
 const logDir = join(Deno.cwd(), 'logs');
 
-const logger = createLogger({
+export const LOG = createLogger({
 	level: 'info',
 	format: format.combine(
+        format.colorize(),
 		format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
 		format.printf(
 			({ timestamp, level, message }) => `${timestamp} [${level}]: ${message}`,
@@ -24,4 +25,6 @@ const logger = createLogger({
 	],
 });
 
-export default logger;
+
+
+export default LOG;

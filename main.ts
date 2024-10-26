@@ -7,9 +7,10 @@ import * as utils from './src/util/object.ts';
 
 import { controllers } from './src/controller/mod.ts';
 import { logRequests } from './src/middleware/log_middleware.ts';
+import LOG from './src/log/default_logger.ts';
 
 if (!utils.checkDefinedValues(APP_CONFIG)) {
-	console.error('Some values in APP_CONFIG are not defined');
+	LOG.error('Some values in APP_CONFIG are not defined');
 	// Deno.exit(1);
 }
 
@@ -28,5 +29,5 @@ app.use('/api', controllers);
 
 const PORT = Deno.env.get('APP_PORT') || 3000;
 app.listen(PORT, () => {
-	console.log(`HTTP server is running at http://localhost:${PORT}`);
+	LOG.info(`HTTP server is running at http://localhost:${PORT}`);
 });
