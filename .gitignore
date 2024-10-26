@@ -1,3 +1,4 @@
 note.md
-
+target/
 .env
+logs/

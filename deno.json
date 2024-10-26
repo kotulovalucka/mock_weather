@@ -1,12 +1,15 @@
 {
 	"tasks": {
 		"dev": "deno run -A --watch ./main.ts",
-		"test": "deno test test/"
+		"test": "deno test -A test/",
+		"compile": "deno compile --unstable --allow-all --output ./target/main ./main.ts"
 	},
 	"imports": {
 		"@std/assert": "jsr:@std/assert@1",
 		"express": "npm:express@^4.21.1",
 		"helmet": "npm:helmet@^8.0.0",
+		"winston": "npm:winston@^3.15.0",
+		"winston-daily-rotate-file": "npm:winston-daily-rotate-file@^5.0.0",
 		"zod": "npm:zod@^3.23.8"
 	},
 	"fmt": {
