@@ -15,5 +15,25 @@
 			"null": "Hodnota musí byť null.",
 			"positive": "Hodnota musí byť kladné číslo."
 		}
+	},
+	"errorMessages": {
+		"weather_client": {
+			"weather_fetch_error": "Počas získavania dát o predpovedi počasia sa vyskytla chyba.",
+			"weather_parse_error": "Počas práce s dátami o predpovedi počasia sa vyskytla chyba.",
+			"weather_not_found": "Dáta o predpovedi pre také miesto neboli nájdené.",
+			"location_fetch_error": "Počas získavania dát o polohe sa vyskytla chyba.",
+			"location_parse_error": "Počas práce s dátami o polohe sa vyskytla chyba.",
+			"location_not_found": "Dáta o polohe pre také miesto neboli nájdené."
+		}
+	},
+	"test": {
+		"test1": "Test1 sk",
+		"test2": "Test2 sk",
+		"innerTest": {
+			"innerTest1": "InnerTest1 sk",
+			"innerTest2": "InnerTest2 sk"
+		},
+		"null": null,
+		"number": 123
 	}
 }

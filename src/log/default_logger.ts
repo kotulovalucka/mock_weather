@@ -2,6 +2,7 @@ import DailyRotateFile from 'npm:winston-daily-rotate-file';
 import { join } from 'node:path';
 import * as winston from 'npm:winston';
 import { format, transports } from 'npm:winston';
+import type { TransformableInfo } from '../../../../../Library/Caches/deno/npm/registry.npmjs.org/logform/2.6.1/index.d.ts';
 
 const logDir = join(Deno.cwd(), 'logs');
 
@@ -34,26 +35,21 @@ const commonFormat = format.combine(
 const consoleFormat = format.combine(
 	format.colorize({ all: true }),
 	format.printf((
-		{ timestamp, level, message, stack }: {
-			timestamp: string;
-			level: string;
-			message: string;
-			stack: string;
-		},
+		{ timestamp, level, message, stack }: TransformableInfo,
 	) =>
 		stack ? `${timestamp} [${level}]: ${message}\n${stack}` : `${timestamp} [${level}]: ${message}`
 	),
 );
 
-const errorFilter = format((info: { level: string }) => {
+const errorFilter = format((info: TransformableInfo) => {
 	return info.level === 'error' ? info : false;
 });
 
-const messageFilter = format((info: { level: string }) => {
+const messageFilter = format((info: TransformableInfo) => {
 	return info.level === 'message' ? info : false;
 });
 
-const debugFilter = format((info: { level: string }) => {
+const debugFilter = format((info: TransformableInfo) => {
 	return info.level === 'debug' ? info : false;
 });
 

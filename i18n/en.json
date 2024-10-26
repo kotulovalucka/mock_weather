@@ -15,5 +15,25 @@
 			"null": "Value must be null.",
 			"positive": "Value must be a positive number."
 		}
+	},
+	"errorMessages": {
+		"weather_client": {
+			"weather_fetch_error": "An error occurred while fetching the forecast data.",
+			"weather_parse_error": "An error occurred while working with the forecast data.",
+			"weather_not_found": "The forecast data for such place was not found.",
+			"location_fetch_error": "An error occurred while fetching the location data.",
+			"location_parse_error": "An error occurred while working with the location data.",
+			"location_not_found": "The location data for such place was not found."
+		}
+	},
+	"test": {
+		"test1": "Test1 en",
+		"test2": "Test2 en",
+		"innerTest": {
+			"innerTest1": "InnerTest1 en",
+			"innerTest2": "InnerTest2 en"
+		},
+		"null": null,
+		"number": 123
 	}
 }

@@ -4,6 +4,6 @@ import type { Language } from '../model/enum/language.ts';
 
 const locales = { sk, en };
 
-export const getErrorMessages = (lang: Language) => {
+export const getSchemaErrorMessages = (lang: Language) => {
 	return locales[lang].schemaErrors;
 };

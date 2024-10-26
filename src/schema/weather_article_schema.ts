@@ -10,11 +10,11 @@ export const WeatherArticleRequestBaseSchema = z.object({
 	article: z.object({
 		type: z.enum([ArticleType.FACTUAL, ArticleType.BULVAR]),
 	}),
-}, { message: schemaUtils.getErrorMessages(Language.EN).general });
+}, { message: schemaUtils.getSchemaErrorMessages(Language.EN).general });
 
 // Extended schema with localized error messages
 export const WeatherArticleRequestSchema = (lang: Language) => {
-	const errorMessages = schemaUtils.getErrorMessages(lang);
+	const errorMessages = schemaUtils.getSchemaErrorMessages(lang);
 
 	return WeatherArticleRequestBaseSchema.extend({
 		location: z.string({ message: errorMessages.typeErrors.string }).min(2, {

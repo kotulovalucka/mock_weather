@@ -14,7 +14,7 @@ export const validate = (schemaFactory: (lang: Language) => ZodSchema) => {
 		if (!parseResult.success) {
 			// Return 400 error if validation fails
 			return res.status(400).json({
-				error: schemaUtils.getErrorMessages(lang).general,
+				error: schemaUtils.getSchemaErrorMessages(lang).general,
 				details: parseResult.error.errors,
 			});
 		}

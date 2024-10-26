@@ -8,6 +8,7 @@ import * as utils from './src/util/object.ts';
 import { controllers } from './src/controller/mod.ts';
 import { logRequests } from './src/middleware/log_middleware.ts';
 import LOG from './src/log/default_logger.ts';
+import { errorHandler } from './src/middleware/error_middleware.ts';
 if (!utils.checkDefinedValues(APP_CONFIG)) {
 	LOG.error('Some values in APP_CONFIG are not defined');
 	// Deno.exit(1);
@@ -25,6 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(logRequests);
 
 app.use('/api', controllers);
+
+app.use(errorHandler);
 
 const PORT = Deno.env.get('APP_PORT') || 3000;
 app.listen(PORT, () => {

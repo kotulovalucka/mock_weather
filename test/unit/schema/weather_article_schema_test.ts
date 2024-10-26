@@ -23,7 +23,7 @@ Deno.test('WeatherArticleRequestSchema - Valid input', () => {
 Deno.test('WeatherArticleRequestSchema - Invalid location (too short)', () => {
 	const lang = Language.EN;
 	const schema = WeatherArticleRequestSchema(lang);
-	const errorMessages = schemaUtils.getErrorMessages(lang);
+	const errorMessages = schemaUtils.getSchemaErrorMessages(lang);
 
 	const invalidData = {
 		location: 'A', // short
@@ -43,7 +43,7 @@ Deno.test('WeatherArticleRequestSchema - Invalid location (too short)', () => {
 Deno.test('WeatherArticleRequestSchema - Invalid type in article', () => {
 	const lang = Language.EN;
 	const schema = WeatherArticleRequestSchema(lang);
-	const errorMessages = schemaUtils.getErrorMessages(lang);
+	const errorMessages = schemaUtils.getSchemaErrorMessages(lang);
 
 	const invalidData = {
 		location: 'Paris',
@@ -63,7 +63,7 @@ Deno.test('WeatherArticleRequestSchema - Invalid type in article', () => {
 Deno.test('WeatherArticleRequestSchema - Invalid type in article', () => {
 	const lang = Language.SK;
 	const schema = WeatherArticleRequestSchema(lang);
-	const errorMessages = schemaUtils.getErrorMessages(lang);
+	const errorMessages = schemaUtils.getSchemaErrorMessages(lang);
 
 	const invalidData = {
 		location: 'Paris',
@@ -98,7 +98,7 @@ Deno.test('WeatherArticleRequestSchema - Missing targetDateTimestamp (optional)'
 Deno.test('WeatherArticleRequestSchema - Invalid targetDateTimestamp (negative number)', () => {
 	const lang = Language.EN;
 	const schema = WeatherArticleRequestSchema(lang);
-	const errorMessages = schemaUtils.getErrorMessages(lang);
+	const errorMessages = schemaUtils.getSchemaErrorMessages(lang);
 
 	const invalidData = {
 		location: 'Paris',
