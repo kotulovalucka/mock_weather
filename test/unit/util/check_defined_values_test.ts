@@ -1,5 +1,5 @@
 import { assertEquals } from 'jsr:@std/assert';
-import { checkDefinedValues } from '../../src/util/object.ts';
+import { checkDefinedValues } from '../../../src/util/object.ts';
 
 Deno.test('checkDefinedValues - Simple object with all values filled', () => {
 	const obj = {

@@ -1,7 +1,8 @@
 {
 	"tasks": {
-		"dev": "deno run -A --watch ./main.ts",
+		"dev": "deno run --env-file -A --watch ./main.ts",
 		"test-all": "deno test test/ -A",
+		"test-unit": "deno test test/unit/ -A",
 		"compile": "deno compile --unstable --allow-all --output ./target/main ./main.ts",
 		"type-check": "deno check ./main.ts"
 	},

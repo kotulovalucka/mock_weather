@@ -1,8 +1,8 @@
 import { assertEquals } from 'jsr:@std/assert';
-import { ArticleType } from '../../src/model/enum/article_type.ts';
-import { Language } from '../../src/model/enum/language.ts';
-import { WeatherArticleRequestSchema } from '../../src/schema/weather_article_schema.ts';
-import * as schemaUtils from '../../src/schema/schema_util.ts';
+import { ArticleType } from '../../../src/model/enum/article_type.ts';
+import { Language } from '../../../src/model/enum/language.ts';
+import { WeatherArticleRequestSchema } from '../../../src/schema/weather_article_schema.ts';
+import * as schemaUtils from '../../../src/schema/schema_util.ts';
 
 Deno.test('WeatherArticleRequestSchema - Valid input', () => {
 	const lang = Language.EN;

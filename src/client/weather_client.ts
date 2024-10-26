@@ -3,6 +3,8 @@ import LOG from '../log/default_logger.ts';
 import type { LocationSearchResponseDto } from '../model/dto/response/forecastApi/location_search.dto.ts';
 import type { LocationWeatherResponseDto } from '../model/dto/response/forecastApi/location_weather.dto.ts';
 import type { WeatherClientMockConfig } from '../model/types/weather_client_mock_config.ts';
+import { LocationSearchResponseSchema } from '../schema/location_search_response_schema.ts';
+import { LocationWeatherResponseSchema } from '../schema/location_weather_response_schema.ts';
 
 export class WeatherClient {
 	private static instance: WeatherClient | undefined;
@@ -13,10 +15,12 @@ export class WeatherClient {
 		if (mockConfig) {
 			this.apiUrl = mockConfig.forecastApi.url;
 			this.apiKey = mockConfig.forecastApi.apiKey;
-			return;
+		} else {
+			this.apiUrl = APP_CONFIG.forecastApi.url;
+			this.apiKey = APP_CONFIG.forecastApi.apiKey;
 		}
-		this.apiUrl = APP_CONFIG.forecastApi.url;
-		this.apiKey = APP_CONFIG.forecastApi.apiKey;
+
+		LOG.info(`Weather client initialized`, { apiUrl: this.apiUrl });
 	}
 
 	public static getInstance(mockConfig: WeatherClientMockConfig = null): WeatherClient {
@@ -26,7 +30,7 @@ export class WeatherClient {
 		return this.instance;
 	}
 
-	public async searchLocationByName(name: string): Promise<LocationSearchResponseDto | null> {
+	public async searchLocationByName(name: string): Promise<LocationSearchResponseDto> {
 		const encodedQuery = encodeURIComponent(name);
 		const url =
 			`${this.apiUrl}/locations/v1/cities/search?apikey=${this.apiKey}&q=${encodedQuery}&language=en&details=false`;
@@ -38,15 +42,20 @@ export class WeatherClient {
 				throw new Error(`Failed to fetch location data: ${response.statusText}`);
 			}
 
-			const data: LocationSearchResponseDto[] = await response.json();
+			const responseBody: unknown = await response.json();
+			const parsedResult = LocationSearchResponseSchema.safeParse(responseBody);
+			if (parsedResult.error) {
+				LOG.error(`Failed to parse location data: ${parsedResult.error.errors}`);
+				throw new Error(`Failed to parse location data: ${parsedResult.error.errors}`);
+			}
+			const data = parsedResult.data;
 			if (data.length === 0) {
 				LOG.warn(`No location found for query: ${name}`);
-				return null;
+				throw new Error(`No location found for query: ${name}`);
 			}
 
-			const location = data[0];
-			LOG.debug(`Found location: ${location.LocalizedName}, ${location.Country.LocalizedName}`);
-			return location;
+			LOG.debug(`Location found for query: ${name}`);
+			return data;
 		} catch (error) {
 			LOG.error(`Error fetching location data for query: ${name}`, error);
 			throw error;
@@ -65,8 +74,15 @@ export class WeatherClient {
 				throw new Error(`Failed to fetch forecast data: ${response.statusText}`);
 			}
 
-			const data: LocationWeatherResponseDto = await response.json();
+			const responseBody: unknown = await response.json();
+			const parsedResult = LocationWeatherResponseSchema.safeParse(responseBody);
+			if (parsedResult.error) {
+				LOG.error(`Failed to parse forecast data: ${parsedResult.error.errors}`);
+				throw new Error(`Failed to parse forecast data: ${parsedResult.error.errors}`);
+			}
+			const data = parsedResult.data;
 			LOG.debug(`Forecast fetched for location ID: ${locationID}`);
+
 			return data;
 		} catch (error) {
 			LOG.error(`Error fetching forecast for location ID: ${locationID}`, error);

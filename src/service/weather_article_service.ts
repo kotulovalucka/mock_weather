@@ -18,12 +18,10 @@ export class WeatherArticleService {
 		weatherArticleRequest: WeatherArticleRequestDto,
 	): Promise<string> {
 		const weatherClientInstance = WeatherClient.getInstance();
-		const locationInfo = await weatherClientInstance.searchLocationByName(
+		const searchLocationResponse = await weatherClientInstance.searchLocationByName(
 			weatherArticleRequest.location,
 		);
-		if (!locationInfo || !locationInfo.Key) {
-			return 'Location not found';
-		}
+		const locationInfo = searchLocationResponse[0];
 		const weatherInfo = await weatherClientInstance.getForecastByLocationID(locationInfo.Key);
 		if (!weatherInfo || !weatherInfo.Headline) {
 			return 'Weather info not found';
