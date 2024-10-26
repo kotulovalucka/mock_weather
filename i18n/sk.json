@@ -1,0 +1,19 @@
+{
+	"schemaErrors": {
+		"general": "Požiadavka je neplatná.",
+		"location": "Poloha musí obsahovať aspoň 2 znaky.",
+		"targetDateTimestamp": "Cieľový dátum musí byť kladné číslo alebo môže byť vynechaný.",
+		"articleType": "Typ článku je neplatný. Povolené typy sú: 'factual' alebo 'bulvar'.",
+		"language": "Jazyk musí byť buď 'sk' alebo 'en'.",
+		"missingBody": "Požiadavka neobsahuje telo.",
+		"typeErrors": {
+			"string": "Hodnota musí byť reťazec.",
+			"number": "Hodnota musí byť číslo.",
+			"boolean": "Hodnota musí byť boolean.",
+			"array": "Hodnota musí byť pole.",
+			"object": "Hodnota musí byť objekt.",
+			"null": "Hodnota musí byť null.",
+			"positive": "Hodnota musí byť kladné číslo."
+		}
+	}
+}

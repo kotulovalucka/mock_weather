@@ -1,6 +1,6 @@
 export enum ArticleType {
-  FACTUAL = "factual",
-  SHORT = "short",
-  BULVAR = "bulvar",
-  DRAMATIC = "dramatic",
+	FACTUAL = 'factual',
+	SHORT = 'short',
+	BULVAR = 'bulvar',
+	DRAMATIC = 'dramatic',
 }

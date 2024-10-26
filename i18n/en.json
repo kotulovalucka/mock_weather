@@ -1,0 +1,19 @@
+{
+	"schemaErrors": {
+		"general": "The request body is invalid.",
+		"location": "Location must contain at least 2 characters.",
+		"targetDateTimestamp": "The target date must be a positive number or can be omitted.",
+		"articleType": "The article type is invalid. Allowed types are: 'factual' or 'bulvar'.",
+		"language": "Language must be either 'sk' or 'en'.",
+		"missingBody": "The request body is missing.",
+		"typeErrors": {
+			"string": "Value must be a string.",
+			"number": "Value must be a number.",
+			"boolean": "Value must be boolean.",
+			"array": "Value must be an array.",
+			"object": "Value must be an object.",
+			"null": "Value must be null.",
+			"positive": "Value must be a positive number."
+		}
+	}
+}
