@@ -17,13 +17,12 @@
 		}
 	},
 	"errorMessages": {
-		"weather_client": {
-			"weather_fetch_error": "An error occurred while fetching the forecast data.",
-			"weather_parse_error": "An error occurred while working with the forecast data.",
-			"weather_not_found": "The forecast data for such place was not found.",
-			"location_fetch_error": "An error occurred while fetching the location data.",
-			"location_parse_error": "An error occurred while working with the location data.",
-			"location_not_found": "The location data for such place was not found."
+		"weatherClient": {
+			"weatherFetch": "An error occurred while fetching the forecast data.",
+			"weatherParse": "An error occurred while working with the forecast data.",
+			"locationFetch": "An error occurred while fetching the location data.",
+			"locationParse": "An error occurred while working with the location data.",
+			"locationZeroMatch": "The location data for such place was not found."
 		}
 	},
 	"test": {

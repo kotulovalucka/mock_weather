@@ -7,6 +7,8 @@ import { HttpError } from '../model/error/HttpError.ts';
 import type { WeatherClientMockConfig } from '../model/types/weather_client_mock_config.ts';
 import { LocationSearchResponseSchema } from '../schema/location_search_response_schema.ts';
 import { LocationWeatherResponseSchema } from '../schema/location_weather_response_schema.ts';
+import * as localizationUtil from '../util/localization.ts';
+import { Language } from '../model/enum/language.ts';
 
 export class WeatherClient {
 	private static instance: WeatherClient | undefined;
@@ -32,17 +34,20 @@ export class WeatherClient {
 		return this.instance;
 	}
 
-	public async searchLocationByName(name: string): Promise<LocationSearchResponseDto> {
+	public async searchLocationByName(
+		name: string,
+		language: Language,
+	): Promise<LocationSearchResponseDto> {
 		const encodedQuery = encodeURIComponent(name);
 		const url =
 			`${this.apiUrl}/locations/v1/cities/search?apikey=${this.apiKey}&q=${encodedQuery}&language=en&details=false`;
 		try {
 			LOG.debug(`Searching for location: ${name}`);
-			const response = await fetch(url);
+			const response = await fetch(url, { signal: AbortSignal.timeout(5_000) });
 			if (!response.ok) {
 				throw new HttpError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
-					`Failed to fetch location data: ${response.statusText}`,
+					localizationUtil.getTranslation('errorMessages.weatherClient.locationFetch', language),
 				);
 			}
 
@@ -50,23 +55,38 @@ export class WeatherClient {
 			const parsedResult = LocationSearchResponseSchema.safeParse(responseBody);
 			if (parsedResult.error) {
 				LOG.error(`Failed to parse location data: ${parsedResult.error.errors}`);
-				throw new HttpError(StatusCodes.INTERNAL_SERVER_ERROR, `Unexpected internal error`);
+				throw new HttpError(
+					StatusCodes.INTERNAL_SERVER_ERROR,
+					localizationUtil.getTranslation('errorMessages.weatherClient.locationParse', language),
+				);
 			}
 			const data = parsedResult.data;
 			if (data.length === 0) {
 				LOG.warn(`No location found for query: ${name}`);
-				throw new HttpError(StatusCodes.NOT_FOUND, `Unexpected internal error`);
+				throw new HttpError(
+					StatusCodes.NOT_FOUND,
+					localizationUtil.getTranslation(
+						'errorMessages.weatherClient.locationZeroMatch',
+						language,
+					),
+				);
 			}
 
 			LOG.debug(`Location found for query: ${name}`);
 			return data;
 		} catch (error) {
 			LOG.error(`Error fetching location data for query: ${name}`, error);
-			throw new HttpError(StatusCodes.INTERNAL_SERVER_ERROR, `Unexpected internal error`);
+			throw new HttpError(
+				StatusCodes.INTERNAL_SERVER_ERROR,
+				localizationUtil.getTranslation('errorMessages.weatherClient.locationFetch', language),
+			);
 		}
 	}
 
-	public async getForecastByLocationID(locationID: string): Promise<LocationWeatherResponseDto> {
+	public async getForecastByLocationID(
+		locationID: string,
+		language: Language,
+	): Promise<LocationWeatherResponseDto> {
 		const url =
 			`${this.apiUrl}/forecasts/v1/daily/1day/${locationID}?apikey=${this.apiKey}&details=true&metric=true`;
 
@@ -77,7 +97,9 @@ export class WeatherClient {
 			if (!response.ok) {
 				throw new HttpError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
-					`Failed to fetch forecast data: ${response.statusText}`,
+					localizationUtil.getTranslation(
+						localizationUtil.getTranslation('errorMessages.weatherClient.weatherFetch', language),
+					),
 				);
 			}
 
@@ -85,7 +107,10 @@ export class WeatherClient {
 			const parsedResult = LocationWeatherResponseSchema.safeParse(responseBody);
 			if (parsedResult.error) {
 				LOG.error(`Failed to parse forecast data: ${parsedResult.error.errors}`);
-				throw new HttpError(StatusCodes.INTERNAL_SERVER_ERROR, `Unexpected internal error`);
+				throw new HttpError(
+					StatusCodes.INTERNAL_SERVER_ERROR,
+					localizationUtil.getTranslation('errorMessages.weatherClient.weatherParse', language),
+				);
 			}
 			const data = parsedResult.data;
 			LOG.debug(`Forecast fetched for location ID: ${locationID}`);
@@ -93,7 +118,10 @@ export class WeatherClient {
 			return data;
 		} catch (error) {
 			LOG.error(`Error fetching forecast for location ID: ${locationID}`, error);
-			throw new HttpError(StatusCodes.INTERNAL_SERVER_ERROR, `Unexpected internal error`);
+			throw new HttpError(
+				StatusCodes.INTERNAL_SERVER_ERROR,
+				localizationUtil.getTranslation('errorMessages.weatherClient.weatherFetch', language),
+			);
 		}
 	}
 }

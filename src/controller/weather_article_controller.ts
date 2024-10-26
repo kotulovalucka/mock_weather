@@ -19,6 +19,7 @@ weatherArticleController.post(
 		const weatherArticleService = WeatherArticleService.getInstance();
 		const weatherArticle = await weatherArticleService.getWeatherArticle(
 			validatedData,
+			req['headers']['accept-language'],
 		);
 
 		res.status(200).json({ message: weatherArticle });

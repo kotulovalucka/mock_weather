@@ -1,6 +1,6 @@
 import { assertEquals } from 'jsr:@std/assert';
 
-import { getTranslation } from '../../src/util/translation.ts';
+import { getTranslation } from '../../src/util/localization.ts';
 import { Language } from '../../src/model/enum/language.ts';
 
 Deno.test('getTranslation - Get translation fo sk', () => {
