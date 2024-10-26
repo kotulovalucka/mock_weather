@@ -7,7 +7,7 @@ const logDir = join(Deno.cwd(), 'logs');
 export const LOG = createLogger({
 	level: 'info',
 	format: format.combine(
-        format.colorize(),
+		format.colorize(),
 		format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
 		format.printf(
 			({ timestamp, level, message }) => `${timestamp} [${level}]: ${message}`,
@@ -24,7 +24,5 @@ export const LOG = createLogger({
 		}),
 	],
 });
-
-
 
 export default LOG;

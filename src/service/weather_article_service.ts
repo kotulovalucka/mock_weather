@@ -1,3 +1,4 @@
+import { WeatherClient } from '../client/weather_client.ts';
 import type { WeatherArticleRequestDto } from '../model/dto/request/weather_article_request.dto.ts';
 
 export class WeatherArticleService {
@@ -14,9 +15,21 @@ export class WeatherArticleService {
 	}
 
 	public async getWeatherArticle(
-		_weatherArticleRequest: WeatherArticleRequestDto,
+		weatherArticleRequest: WeatherArticleRequestDto,
 	): Promise<string> {
-		return await Promise.resolve('Weather article');
+		const weatherClientInstance = WeatherClient.getInstance();
+		const locationInfo = await weatherClientInstance.searchLocationByName(
+			weatherArticleRequest.location,
+		);
+		if (!locationInfo || !locationInfo.Key) {
+			return 'Location not found';
+		}
+		const weatherInfo = await weatherClientInstance.getForecastByLocationID(locationInfo.Key);
+		if (!weatherInfo || !weatherInfo.Headline) {
+			return 'Weather info not found';
+		}
+		// TODO: Implement weather article generation
+		return JSON.stringify(weatherInfo, null, 2);
 	}
 
 	public async getWeatherArticleCollection(
