@@ -1,0 +1,53 @@
+version: '3.8'
+services:
+  weather-api:
+    build: .
+    container_name: weather-api
+    image: weather-image
+    ports:
+      - '3000:3000'
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+      - DENO_ENV=development
+      # PostgreSQL connection environment variables
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=weatheruser
+      - POSTGRES_PASSWORD=weatherpass
+      - POSTGRES_DB=weatherdb
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+    networks:
+      - weather-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:14-alpine
+    container_name: weather-postgres
+    environment:
+      - POSTGRES_USER=weatheruser
+      - POSTGRES_PASSWORD=weatherpass
+      - POSTGRES_DB=weatherdb
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - weather-network
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U weatheruser -d weatherdb']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  weather-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local

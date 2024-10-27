@@ -30,6 +30,8 @@ app.use('/api', controllers);
 app.use(errorHandler);
 
 const PORT = Deno.env.get('APP_PORT') || 3000;
-app.listen(PORT, () => {
-	LOG.info(`HTTP server is running at http://localhost:${PORT}`);
+const HOST = Deno.env.get('HOST') || '0.0.0.0';
+
+app.listen(Number(PORT), HOST, () => {
+	LOG.info(`HTTP server is running at http://${HOST}:${PORT}`);
 });
