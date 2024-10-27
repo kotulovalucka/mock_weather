@@ -1,8 +1,4 @@
 export type AppConfig = {
-	redis: {
-		host: string;
-		port: number;
-	};
 	database: {
 		host: string;
 		port: number;
@@ -17,5 +13,11 @@ export type AppConfig = {
 	llm: {
 		url: string;
 		apiKey: string;
+	};
+	cache: {
+		article: {
+			ttl: number;
+			maxItems: number;
+		};
 	};
 };

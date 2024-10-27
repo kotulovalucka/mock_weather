@@ -1,10 +1,6 @@
 import type { AppConfig } from './model/types/config.ts';
 
 export const APP_CONFIG: AppConfig = {
-	redis: {
-		host: Deno.env.get('REDIS_HOST') || 'localhost',
-		port: Number(Deno.env.get('REDIS_PORT')) || 6379,
-	},
 	database: {
 		host: Deno.env.get('DB_HOST') || 'localhost',
 		port: Number(Deno.env.get('DB_PORT')) || 5432,
@@ -19,5 +15,11 @@ export const APP_CONFIG: AppConfig = {
 	llm: {
 		url: Deno.env.get('LLM_API_URL')!,
 		apiKey: Deno.env.get('LLM_API_KEY')!,
+	},
+	cache: {
+		article: {
+			ttl: Number(Deno.env.get('CACHE_ARTICLE_TTL')) || 3_600,
+			maxItems: Number(Deno.env.get('CACHE_ARTICLE_MAX_ITEMS')) || 1_000,
+		},
 	},
 };

@@ -81,8 +81,16 @@ export class LLMClient {
 			}
 
 			const data = parsedResult.data;
-
-			const LMMOutput = JSON.parse(data.message.content[0].text);
+			let LMMOutput = '';
+			try {
+				LMMOutput = JSON.parse(data.message.content[0].text);
+			} catch {
+				LOG.error(`Failed to parse LLM response: `, data.message.content[0].text);
+				throw new WeatherServiceCommonError(
+					StatusCodes.INTERNAL_SERVER_ERROR,
+					localizationUtil.getTranslation('errorMessages.LLMClient.parse', language),
+				);
+			}
 			const LLMParsedResult = LLMTextOutputSchema.safeParse(LMMOutput);
 
 			if (!LLMParsedResult.success) {

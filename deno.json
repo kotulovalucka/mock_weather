@@ -12,6 +12,7 @@
 		"express": "npm:express@^4.21.1",
 		"helmet": "npm:helmet@^8.0.0",
 		"http-status-codes": "npm:http-status-codes@^2.3.0",
+		"node-cache": "npm:node-cache@^5.1.2",
 		"winston": "npm:winston@^3.15.0",
 		"winston-daily-rotate-file": "npm:winston-daily-rotate-file@^5.0.0",
 		"zod": "npm:zod@^3.23.8"
