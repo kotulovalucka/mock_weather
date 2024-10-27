@@ -3,7 +3,7 @@ import { APP_CONFIG } from '../config.ts';
 import LOG from '../log/default_logger.ts';
 import type { LocationSearchResponseDto } from '../model/dto/response/forecastApi/location_search.dto.ts';
 import type { LocationWeatherResponseDto } from '../model/dto/response/forecastApi/location_weather.dto.ts';
-import { HttpError } from '../model/error/HttpError.ts';
+import { WeatherServiceCommonError } from '../model/error/weather_service_common_error.ts';
 import type { WeatherClientMockConfig } from '../model/types/weather_client_mock_config.ts';
 import { LocationSearchResponseSchema } from '../schema/client/location_search_response_schema.ts';
 import { LocationWeatherResponseSchema } from '../schema/client/location_weather_response_schema.ts';
@@ -46,7 +46,7 @@ export class WeatherClient {
 			const response = await fetch(url);
 			if (!response.ok) {
 				LOG.error(`Failed to fetch location data for query: ${name}`);
-				throw new HttpError(
+				throw new WeatherServiceCommonError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
 					localizationUtil.getTranslation('errorMessages.weatherClient.locationFetch', language),
 				);
@@ -56,7 +56,7 @@ export class WeatherClient {
 			const parsedResult = LocationSearchResponseSchema.safeParse(responseBody);
 			if (!parsedResult.success) {
 				LOG.error(`Failed to parse location data: ${parsedResult.error.errors}`);
-				throw new HttpError(
+				throw new WeatherServiceCommonError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
 					localizationUtil.getTranslation('errorMessages.weatherClient.locationParse', language),
 				);
@@ -64,7 +64,7 @@ export class WeatherClient {
 			const data = parsedResult.data;
 			if (data.length === 0) {
 				LOG.warn(`No location found for query: ${name}`);
-				throw new HttpError(
+				throw new WeatherServiceCommonError(
 					StatusCodes.NOT_FOUND,
 					localizationUtil.getTranslation(
 						'errorMessages.weatherClient.locationZeroMatch',
@@ -77,10 +77,10 @@ export class WeatherClient {
 			return data;
 		} catch (error) {
 			LOG.error(`Error fetching location data for query: ${name}`, error);
-			if (error instanceof HttpError) {
+			if (error instanceof WeatherServiceCommonError) {
 				throw error;
 			}
-			throw new HttpError(
+			throw new WeatherServiceCommonError(
 				StatusCodes.INTERNAL_SERVER_ERROR,
 				localizationUtil.getTranslation('errorMessages.weatherClient.locationFetch', language),
 			);
@@ -99,7 +99,7 @@ export class WeatherClient {
 			const response = await fetch(url);
 
 			if (!response.ok) {
-				throw new HttpError(
+				throw new WeatherServiceCommonError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
 					localizationUtil.getTranslation(
 						localizationUtil.getTranslation('errorMessages.weatherClient.weatherFetch', language),
@@ -111,7 +111,7 @@ export class WeatherClient {
 			const parsedResult = LocationWeatherResponseSchema.safeParse(responseBody);
 			if (!parsedResult.success) {
 				LOG.error(`Failed to parse forecast data: ${parsedResult.error.errors}`);
-				throw new HttpError(
+				throw new WeatherServiceCommonError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
 					localizationUtil.getTranslation('errorMessages.weatherClient.weatherParse', language),
 				);
@@ -126,10 +126,10 @@ export class WeatherClient {
 			return data;
 		} catch (error) {
 			LOG.error(`Error fetching forecast for location ID: ${locationID}`, error);
-			if (error instanceof HttpError) {
+			if (error instanceof WeatherServiceCommonError) {
 				throw error;
 			}
-			throw new HttpError(
+			throw new WeatherServiceCommonError(
 				StatusCodes.INTERNAL_SERVER_ERROR,
 				localizationUtil.getTranslation('errorMessages.weatherClient.weatherFetch', language),
 			);

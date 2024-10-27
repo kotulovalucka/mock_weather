@@ -1,5 +1,5 @@
 import { StatusCodes } from 'npm:http-status-codes';
-export class HttpError extends Error {
+export class WeatherServiceCommonError extends Error {
 	public statusCode: StatusCodes;
 
 	constructor(
