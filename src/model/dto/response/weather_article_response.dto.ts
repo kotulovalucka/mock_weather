@@ -1,9 +1,4 @@
-export type WeatherArticleResponseDto = {
-	id: number;
-	createdAt: Date;
-	modifiedAt: Date;
-	location: string;
-	title: string;
-	perex: string;
-	content: string;
-};
+import type { z } from 'zod';
+import type { LLMTextOutputSchema } from '../../../schema/client/llm_article_response_schema.ts';
+
+export type WeatherArticleResponseDto = z.infer<typeof LLMTextOutputSchema>;

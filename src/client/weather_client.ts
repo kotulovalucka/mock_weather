@@ -5,8 +5,8 @@ import type { LocationSearchResponseDto } from '../model/dto/response/forecastAp
 import type { LocationWeatherResponseDto } from '../model/dto/response/forecastApi/location_weather.dto.ts';
 import { HttpError } from '../model/error/HttpError.ts';
 import type { WeatherClientMockConfig } from '../model/types/weather_client_mock_config.ts';
-import { LocationSearchResponseSchema } from '../schema/location_search_response_schema.ts';
-import { LocationWeatherResponseSchema } from '../schema/location_weather_response_schema.ts';
+import { LocationSearchResponseSchema } from '../schema/client/location_search_response_schema.ts';
+import { LocationWeatherResponseSchema } from '../schema/client/location_weather_response_schema.ts';
 import * as localizationUtil from '../util/localization.ts';
 import { Language } from '../model/enum/language.ts';
 
@@ -45,6 +45,7 @@ export class WeatherClient {
 			LOG.debug(`Searching for location: ${name} in apiUrl: ${this.apiUrl}`);
 			const response = await fetch(url);
 			if (!response.ok) {
+				LOG.error(`Failed to fetch location data for query: ${name}`);
 				throw new HttpError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
 					localizationUtil.getTranslation('errorMessages.weatherClient.locationFetch', language),

@@ -23,6 +23,10 @@
 			"locationFetch": "An error occurred while fetching the location data.",
 			"locationParse": "An error occurred while working with the location data.",
 			"locationZeroMatch": "The location data for such place was not found."
+		},
+		"LLMClient": {
+			"fetch": "It was not possible to generate article due to internal network error",
+			"parse": "It was not possible to generate article due to incositent data"
 		}
 	},
 	"test": {

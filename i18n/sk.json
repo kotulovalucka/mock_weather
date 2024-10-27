@@ -23,6 +23,10 @@
 			"locationFetch": "Počas získavania dát o polohe sa vyskytla chyba.",
 			"locationParse": "Počas práce s dátami o polohe sa vyskytla chyba.",
 			"locationZeroMatch": "Dáta o polohe pre také miesto neboli nájdené."
+		},
+		"LLMClient": {
+			"fetch": "Nebolo možné vygenerovať článok kvôli vnútornej chybe siete",
+			"parse": "Nebolo možné vygenerovať článok kvôli nekonzistentným dátam"
 		}
 	},
 	"test": {

@@ -1,5 +1,5 @@
 import { assertEquals } from 'jsr:@std/assert';
-import { LocationWeatherResponseSchema } from '../../../src/schema/location_weather_response_schema.ts';
+import { LocationWeatherResponseSchema } from '../../../src/schema/client/location_weather_response_schema.ts';
 
 const validLocationWeatherData = {
 	Headline: {

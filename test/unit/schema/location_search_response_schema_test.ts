@@ -2,7 +2,7 @@ import { assertEquals } from 'jsr:@std/assert';
 import {
 	LocationSearchObjectResponseSchema,
 	LocationSearchResponseSchema,
-} from '../../../src/schema/location_search_response_schema.ts';
+} from '../../../src/schema/client/location_search_response_schema.ts';
 // Valid mock data for LocationSearchResponseSchema
 const validLocationSearchData = [{
 	Key: '301523',
