@@ -7,7 +7,9 @@
 		"type-check": "deno check ./main.ts"
 	},
 	"imports": {
+		"@aws-sdk/credential-provider-web-identity": "npm:@aws-sdk/credential-provider-web-identity@^3.679.0",
 		"@std/assert": "jsr:@std/assert@1",
+		"cohere-ai": "npm:cohere-ai@^7.14.0",
 		"dotenv": "npm:dotenv@^16.4.5",
 		"express": "npm:express@^4.21.1",
 		"helmet": "npm:helmet@^8.0.0",

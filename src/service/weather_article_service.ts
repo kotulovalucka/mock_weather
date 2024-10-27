@@ -1,3 +1,4 @@
+import { LLMClient } from '../client/article_mll_client.ts';
 import { WeatherClient } from '../client/weather_client.ts';
 import type { WeatherArticleRequestDto } from '../model/dto/request/weather_article_request.dto.ts';
 import { Language } from '../model/enum/language.ts';
@@ -5,6 +6,7 @@ import { Language } from '../model/enum/language.ts';
 export class WeatherArticleService {
 	private static instance: WeatherArticleService | undefined;
 	private weatherClientInstance = WeatherClient.getInstance();
+	private LLMClientInstance = LLMClient.getInstance();
 
 	private constructor() {}
 
@@ -30,8 +32,10 @@ export class WeatherArticleService {
 			locationInfo.Key,
 			language,
 		);
-		// TODO: Implement weather article generation
-		return JSON.stringify(weatherInfo, null, 2);
+
+		const article = await this.LLMClientInstance.generateWeatherArticle(weatherInfo, locationInfo, weatherArticleRequest.article.type  , language);
+
+		return article as string;
 	}
 
 	public async getWeatherArticleCollection(

@@ -1,4 +1,9 @@
-import type { LocationSearchResponseSchema } from '../../../../schema/location_search_response_schema.ts';
+import type {
+	LocationSearchObjectResponseSchema,
+	LocationSearchResponseSchema,
+} from '../../../../schema/location_search_response_schema.ts';
 import { z } from 'zod';
 
 export type LocationSearchResponseDto = z.infer<typeof LocationSearchResponseSchema>;
+
+export type SingleLocationSearchResponseDto = z.infer<typeof LocationSearchObjectResponseSchema>;
