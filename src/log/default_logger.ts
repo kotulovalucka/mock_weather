@@ -6,7 +6,6 @@ import type { TransformableInfo } from '../../../../../Library/Caches/deno/npm/r
 
 const logDir = join(Deno.cwd(), 'logs');
 
-// Custom levels configuration
 const customLevels = {
 	levels: {
 		error: 0,
@@ -24,20 +23,25 @@ const customLevels = {
 	},
 };
 
-// Create format combinations
 const commonFormat = format.combine(
-	format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+	format.timestamp({
+		format: () => new Date().toISOString(),
+	}),
 	format.errors({ stack: true }),
 	format.splat(),
 	format.json(),
 );
 
 const consoleFormat = format.combine(
+	format.timestamp({
+		format: () => new Date().toISOString(),
+	}),
 	format.colorize({ all: true }),
-	format.printf((
-		{ timestamp, level, message, stack }: TransformableInfo,
-	) =>
-		stack ? `${timestamp} [${level}]: ${message}\n${stack}` : `${timestamp} [${level}]: ${message}`
+	format.printf(
+		({ timestamp, level, message, stack }: TransformableInfo) =>
+			stack
+				? `${timestamp} [${level}]: ${message}\n${stack}`
+				: `${timestamp} [${level}]: ${message}`,
 	),
 );
 
@@ -65,7 +69,6 @@ const customTransports = [
 		format: commonFormat,
 		zippedArchive: true,
 	}),
-
 	// Error log - contains only errors
 	new DailyRotateFile({
 		dirname: join(logDir, 'error'),
@@ -78,7 +81,6 @@ const customTransports = [
 			commonFormat,
 		),
 	}),
-
 	// Message log - contains only messages ( requests, responses, etc.)
 	new DailyRotateFile({
 		dirname: join(logDir, 'message'),
@@ -91,7 +93,6 @@ const customTransports = [
 			commonFormat,
 		),
 	}),
-
 	// Debug log - contains only debug messages
 	new DailyRotateFile({
 		dirname: join(logDir, 'debug'),
@@ -104,7 +105,6 @@ const customTransports = [
 			commonFormat,
 		),
 	}),
-
 	// Console transport for info and above
 	new transports.Console({
 		level: 'info',

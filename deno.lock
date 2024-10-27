@@ -13,6 +13,8 @@
     "npm:helmet@8.0.0": "8.0.0",
     "npm:http-status-codes@*": "2.3.0",
     "npm:http-status-codes@^2.3.0": "2.3.0",
+    "npm:uuid@*": "11.0.0",
+    "npm:uuid@11": "11.0.0",
     "npm:winston-daily-rotate-file@*": "5.0.0_winston@3.15.0",
     "npm:winston-daily-rotate-file@5": "5.0.0_winston@3.15.0",
     "npm:winston@*": "3.15.0",
@@ -773,6 +775,9 @@
     "utils-merge@1.0.1": {
       "integrity": "sha512-pMZTvIkT1d+TFGvDOqodOclx0QWkkgi6Tdoa8gC8ffGAAqz9pzPTZWAybbsHHoED/ztMtkv/VoYTYyShUn81hA=="
     },
+    "uuid@11.0.0": {
+      "integrity": "sha512-iE8Fa5fgBY4rN5GvNUJ8TSwO1QG7TzdPfhrJczf6XJ6mZUxh/GX433N70fCiJL9h8EKP5ayEIo0Q6EBQGWHFqA=="
+    },
     "vary@1.1.2": {
       "integrity": "sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg=="
     },
@@ -824,6 +829,7 @@
       "npm:express@^4.21.1",
       "npm:helmet@8",
       "npm:http-status-codes@^2.3.0",
+      "npm:uuid@11",
       "npm:winston-daily-rotate-file@5",
       "npm:winston@^3.15.0",
       "npm:zod@^3.23.8"
