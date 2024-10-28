@@ -1,4 +1,4 @@
-import type { AppConfig } from './model/types/config.ts';
+import type { AppConfig } from '../model/types/config.ts';
 
 export const APP_CONFIG: AppConfig = {
 	database: {

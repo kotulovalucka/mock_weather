@@ -1,6 +1,6 @@
 import { LLMClient } from '../client/article_mll_client.ts';
 import { WeatherClient } from '../client/weather_client.ts';
-import { APP_CONFIG } from '../config.ts';
+import { APP_CONFIG } from '../config/app_config.ts';
 import LOG from '../log/default_logger.ts';
 import type { WeatherArticleRequestDto } from '../model/dto/request/weather_article_request.dto.ts';
 import type { WeatherArticleResponseDto } from '../model/dto/response/weather_article_response.dto.ts';

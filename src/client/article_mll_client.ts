@@ -1,5 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
-import { APP_CONFIG } from '../config.ts';
+import { APP_CONFIG } from '../config/app_config.ts';
 import LOG from '../log/default_logger.ts';
 import type { SingleLocationSearchResponseDto } from '../model/dto/response/forecast_api/location_search.dto.ts';
 import type { LocationWeatherResponseDto } from '../model/dto/response/forecast_api/location_weather.dto.ts';
