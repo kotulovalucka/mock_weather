@@ -46,21 +46,13 @@ export class LLMClient {
 			const prompt = this.generatePrompt(weatherInfo, locationInfo, style, language);
 			LOG.debug(`Generating article with prompt: ${prompt}`);
 
-			const response = await fetch(`${this.apiUrl}/v2/chat`, {
-				method: 'POST',
-				headers: {
-					'accept': 'application/json',
-					'content-type': 'application/json',
-					'Authorization': `bearer ${this.apiKey}`,
-				},
-				body: JSON.stringify({
-					model: 'command-r-plus-08-2024',
-					messages: [{ role: 'user', content: prompt }],
-				}),
-			});
+			const response = await this.getLLMResponse(prompt);
 
 			if (!response.ok) {
-				LOG.error(`Failed to generate article from LLM`);
+				LOG.error(
+					`Failed to generate article from LLM, response status: ${response.status}, response body: ${await response
+						.text()}`,
+				);
 				throw new WeatherServiceCommonError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
 					localizationUtil.getTranslation('errorMessages.LLMClient.fetch', language),
@@ -168,5 +160,27 @@ export class LLMClient {
 			`;
 
 		return prompt;
+	}
+
+	/**
+	 * It sends given prompt to LLM model and await given response in total synchrnous way ( not stream ).
+	 * @param apiKey
+	 * @param prompt
+	 * @returns
+	 */
+	private async getLLMResponse(prompt: string): Promise<Response> {
+		const response = await fetch(`${this.apiUrl}/v2/chat`, {
+			method: 'POST',
+			headers: {
+				'accept': 'application/json',
+				'content-type': 'application/json',
+				'Authorization': `bearer ${this.apiKey}`,
+			},
+			body: JSON.stringify({
+				model: 'command-r-plus-08-2024',
+				messages: [{ role: 'user', content: prompt }],
+			}),
+		});
+		return response;
 	}
 }

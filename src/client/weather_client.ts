@@ -45,7 +45,10 @@ export class WeatherClient {
 			LOG.debug(`Searching for location: ${name} in apiUrl: ${this.apiUrl}`);
 			const response = await fetch(url);
 			if (!response.ok) {
-				LOG.error(`Failed to fetch location data for query: ${name}`);
+				LOG.error(
+					`Failed to fetch location data for query: ${name}, response status: ${response.status}, response body: ${await response
+						.text()}`,
+				);
 				throw new WeatherServiceCommonError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
 					localizationUtil.getTranslation('errorMessages.weatherClient.locationFetch', language),
@@ -99,6 +102,10 @@ export class WeatherClient {
 			const response = await fetch(url);
 
 			if (!response.ok) {
+				LOG.error(
+					`Failed to fetch forecast data for location ID: ${locationID}, response status: ${response.status}, response body: ${await response
+						.text()}`,
+				);
 				throw new WeatherServiceCommonError(
 					StatusCodes.INTERNAL_SERVER_ERROR,
 					localizationUtil.getTranslation(
