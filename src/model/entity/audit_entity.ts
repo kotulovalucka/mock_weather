@@ -2,13 +2,16 @@ import { Column, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } fr
 import { RevType } from '../enum/rev_type.ts';
 
 export class AuditEntity {
-	@PrimaryGeneratedColumn()
+	@PrimaryGeneratedColumn({ name: 'rev_id' })
 	public revId: number;
-	@Column({ type: 'enum', enum: RevType, nullable: false })
+	@Column({ name: 'rev_type', type: 'enum', enum: RevType, nullable: false })
 	public revType: RevType;
-	@CreateDateColumn({ type: 'timestamptz' })
+	@CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
 	public createdAt: Date;
 
-	@UpdateDateColumn({ type: 'timestamptz' })
+	@UpdateDateColumn({ name: 'modified_at', type: 'timestamptz' })
 	public modifiedAt: Date;
+
+	@UpdateDateColumn({ name: 'rev_timestamp', type: 'timestamptz' })
+	public revTimestamp: Date;
 }

@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, UpdateDateColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { AuditEntity } from './audit_entity.ts';
 
 @Entity({ name: 'LLMArticleAudit' })
@@ -6,8 +6,8 @@ export class LLMArticleAuditEntity extends AuditEntity {
 	@Column({ type: 'int' })
 	id: number;
 
-	@Column({ unique: true, length: 256, type: 'varchar' })
-	location_key: string;
+	@Column({ name: 'location_key', unique: true, length: 256, type: 'varchar' })
+	locationKey: string;
 
 	@Column({ length: 256, type: 'varchar' })
 	title: string;
@@ -17,10 +17,4 @@ export class LLMArticleAuditEntity extends AuditEntity {
 
 	@Column({ length: 2560, type: 'varchar' })
 	description: string;
-
-	@UpdateDateColumn({ type: 'timestamptz' })
-	modified_at: Date;
-
-	@CreateDateColumn({ type: 'timestamptz' })
-	created_at: Date;
 }

@@ -8,9 +8,9 @@ export class BaseEntity extends TypeOrmBaseEntity {
 	@PrimaryGeneratedColumn()
 	public id: number;
 
-	@CreateDateColumn({ type: 'timestamptz' })
+	@CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
 	public createdAt: Date;
 
-	@UpdateDateColumn({ type: 'timestamptz' })
+	@UpdateDateColumn({ name: 'modified_at', type: 'timestamptz' })
 	public modifiedAt: Date;
 }
