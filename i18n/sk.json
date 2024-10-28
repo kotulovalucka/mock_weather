@@ -33,7 +33,8 @@
 		}
 	},
 	"weatherServiceGeneralMessages": {
-		"unknownErrorDuringIntialization": "Počas inicializácie služby počasia sa vyskytla neznáma chyba."
+		"unknownErrorDuringIntialization": "Počas inicializácie služby počasia sa vyskytla neznáma chyba.",
+		"rateLimitExceeded": "Bol prekročený limit požiadavok, skúste to prosím neskôr."
 	},
 	"test": {
 		"test1": "Test1 sk",

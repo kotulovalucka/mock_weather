@@ -33,7 +33,8 @@
 		}
 	},
 	"weatherServiceGeneralMessages": {
-		"unknownErrorDuringIntialization": "An unknown error occurred during the initialization of the weather service."
+		"unknownErrorDuringIntialization": "An unknown error occurred during the initialization of the weather service.",
+		"rateLimitExceeded": "The rate limit for the weather service has been exceeded. Please try again later."
 	},
 	"test": {
 		"test1": "Test1 en",

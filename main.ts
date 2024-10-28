@@ -10,6 +10,7 @@ import { logRequests } from './src/middleware/log_middleware.ts';
 import LOG from './src/log/default_logger.ts';
 import { errorHandler } from './src/middleware/error_middleware.ts';
 import { initializeORM } from './src/config/orm_config.ts';
+import { RATE_LIMIT_CONFIG } from './src/config/rate_limit_config.ts';
 
 if (!utils.checkDefinedValues(APP_CONFIG)) {
 	LOG.error('Some values in APP_CONFIG are not defined, exiting the process ...');
@@ -18,9 +19,10 @@ if (!utils.checkDefinedValues(APP_CONFIG)) {
 
 const ORM_CONFIG = await initializeORM();
 repositoryUtil.initializeRepositories(ORM_CONFIG);
+
 const app = express();
 app.set('trust proxy', 1);
-
+app.use(RATE_LIMIT_CONFIG);
 app.use(helmet());
 app.use(cors());
 app.use(express.json());

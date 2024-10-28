@@ -20,4 +20,8 @@ export type AppConfig = {
 			maxItems: number;
 		};
 	};
+	rateLimit: {
+		windowMs: number;
+		limit: number;
+	};
 };

@@ -22,4 +22,10 @@ export const APP_CONFIG: AppConfig = {
 			maxItems: Number(Deno.env.get('CACHE_ARTICLE_MAX_ITEMS')) || 1_000,
 		},
 	},
+	rateLimit: {
+		windowMs: Deno.env.get('RATE_LIMIT_WINDOW_MS')
+			? Number(Deno.env.get('RATE_LIMIT_WINDOW_MS'))
+			: 60 * 1000 * 5,
+		limit: Deno.env.get('RATE_LIMIT_LIMIT') ? Number(Deno.env.get('RATE_LIMIT_LIMIT')) : 10,
+	},
 };
