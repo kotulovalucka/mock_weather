@@ -3,11 +3,11 @@ services:
   weather-api:
     build: .
     container_name: weather-api
-    image: weather-image
+    image: weather-api
     ports:
       - '3000:3000'
     env_file:
-      - .env
+      - .dockerenv
     volumes:
       - .:/app
     depends_on:
