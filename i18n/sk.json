@@ -6,14 +6,17 @@
 		"articleType": "Typ článku je neplatný. Povolené typy sú: 'factual' alebo 'bulvar'.",
 		"language": "Jazyk musí byť buď 'sk' alebo 'en'.",
 		"missingBody": "Požiadavka neobsahuje telo.",
+		"limitMax10": "Limit musí byť kladné číslo menšie ako 10.",
 		"typeErrors": {
 			"string": "Hodnota musí byť reťazec.",
+			"int": "Hodnota musí byť celé číslo.",
 			"number": "Hodnota musí byť číslo.",
 			"boolean": "Hodnota musí byť boolean.",
 			"array": "Hodnota musí byť pole.",
 			"object": "Hodnota musí byť objekt.",
 			"null": "Hodnota musí byť null.",
-			"positive": "Hodnota musí byť kladné číslo."
+			"positive": "Hodnota musí byť kladné číslo.",
+			"nonNegative": "Hodnota musí byť nezáporné číslo."
 		}
 	},
 	"errorMessages": {

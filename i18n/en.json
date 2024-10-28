@@ -6,14 +6,17 @@
 		"articleType": "The article type is invalid. Allowed types are: 'factual' or 'bulvar'.",
 		"language": "Language must be either 'sk' or 'en'.",
 		"missingBody": "The request body is missing.",
+		"limitMax10": "The limit must be a positive number less than 10.",
 		"typeErrors": {
 			"string": "Value must be a string.",
+			"int": "Value must be an integer.",
 			"number": "Value must be a number.",
 			"boolean": "Value must be boolean.",
 			"array": "Value must be an array.",
 			"object": "Value must be an object.",
 			"null": "Value must be null.",
-			"positive": "Value must be a positive number."
+			"positive": "Value must be a positive number.",
+			"nonNegative": "Value must be a non-negative number."
 		}
 	},
 	"errorMessages": {

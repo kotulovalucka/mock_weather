@@ -9,6 +9,10 @@ import NodeCache from 'npm:node-cache';
 import { LLMArticleAuditRepository } from '../repository/llm_article_audit_repository.ts';
 import { mapToLLMArticleEntity } from '../mapper/to_llm_article_entity.ts';
 import { LLMArticleRepository } from '../repository/llm_article_repository.ts';
+import type {
+	WeatherArticleCollectionRequestQueryMappedDto,
+} from '../model/dto/request/weather_article_collection_request_query.dto.ts';
+import type { AuditEntity } from '../model/entity/audit_entity.ts';
 
 export class WeatherArticleService {
 	private static instance: WeatherArticleService | undefined;
@@ -77,9 +81,27 @@ export class WeatherArticleService {
 	}
 
 	public async getWeatherArticleCollection(
-		_weatherArticleRequest: WeatherArticleRequestDto,
-	): Promise<string[]> {
-		return await Promise.resolve(['Weather article 1', 'Weather article 2']);
+		reqQuery: WeatherArticleCollectionRequestQueryMappedDto,
+		language: Language = Language.EN,
+	): Promise<AuditEntity[]> {
+		const searchLocationResponse = await this.weatherClientInstance.searchLocationByName(
+			reqQuery.locationName,
+			language,
+		);
+
+		const locationInfo = searchLocationResponse[0];
+
+		const audits = await this.llmArticleAuditRepository.getArticles(
+			reqQuery.limit,
+			reqQuery.offset,
+			locationInfo.Key,
+			language,
+			reqQuery.articleType,
+			reqQuery.dateFrom,
+			reqQuery.dateTo,
+		);
+
+		return audits;
 	}
 
 	private async upsertArticle(
