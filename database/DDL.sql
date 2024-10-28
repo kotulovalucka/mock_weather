@@ -1,5 +1,5 @@
 -- Main table
-CREATE TABLE "LLMArticle" (
+CREATE TABLE IF NOT EXISTS "LLMArticle" (
     id SERIAL PRIMARY KEY,
     location_key VARCHAR(255) UNIQUE NOT NULL,
     title VARCHAR(256),
@@ -10,12 +10,17 @@ CREATE TABLE "LLMArticle" (
 );
 
 -- Enum type for revision type
-CREATE TYPE "RevType" AS ENUM ('insert', 'update', 'delete');
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'RevType') THEN
+        CREATE TYPE "RevType" AS ENUM ('insert', 'update', 'delete');
+    END IF;
+END $$;
 
 -- Audit table
-CREATE TABLE "LLMArticlesAudit" (
+CREATE TABLE IF NOT EXISTS "LLMArticlesAudit" (
     rev_id SERIAL PRIMARY KEY,
-    article_id INT NOT NULL,  -- not referencing, so we can delete the article and watch history of it without any problems
+    article_id INT NOT NULL, -- not referencing, so we can delete the article and watch history of it without any problems
     location_key VARCHAR(255),
     title VARCHAR(256),
     perex VARCHAR(512),
@@ -54,9 +59,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Drop trigger if exists before creating
+DROP TRIGGER IF EXISTS "After_LLMArticle_Insert" ON "LLMArticle";
 CREATE TRIGGER "After_LLMArticle_Insert"
-AFTER INSERT ON "LLMArticle"
-FOR EACH ROW EXECUTE FUNCTION "Trigger_LLMArticle_Insert"();
+    AFTER INSERT ON "LLMArticle"
+    FOR EACH ROW EXECUTE FUNCTION "Trigger_LLMArticle_Insert"();
 
 -- Update trigger for audit
 CREATE OR REPLACE FUNCTION "Trigger_LLMArticle_Update"()
@@ -86,6 +93,8 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- Drop trigger if exists before creating
+DROP TRIGGER IF EXISTS "After_LLMArticle_Update" ON "LLMArticle";
 CREATE TRIGGER "After_LLMArticle_Update"
-AFTER UPDATE ON "LLMArticle"
-FOR EACH ROW EXECUTE FUNCTION "Trigger_LLMArticle_Update"();
+    AFTER UPDATE ON "LLMArticle"
+    FOR EACH ROW EXECUTE FUNCTION "Trigger_LLMArticle_Update"();
