@@ -1,4 +1,5 @@
 note.md
 target/
 .env
+.dockerenv
 logs/

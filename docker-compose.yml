@@ -8,14 +8,12 @@ services:
       - '3000:3000'
     environment:
       - PORT=3000
-      - NODE_ENV=development
       - DENO_ENV=development
-      # PostgreSQL connection environment variables
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - POSTGRES_USER=weatheruser
-      - POSTGRES_PASSWORD=weatherpass
-      - POSTGRES_DB=weatherdb
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
     volumes:
       - .:/app
     depends_on:
@@ -28,9 +26,9 @@ services:
     image: postgres:14-alpine
     container_name: weather-postgres
     environment:
-      - POSTGRES_USER=weatheruser
-      - POSTGRES_PASSWORD=weatherpass
-      - POSTGRES_DB=weatherdb
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
     ports:
       - '5432:5432'
     volumes:
