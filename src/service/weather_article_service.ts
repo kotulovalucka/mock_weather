@@ -45,8 +45,10 @@ export class WeatherArticleService {
 		);
 
 		const locationInfo = searchLocationResponse[0];
-		const cachedArticle: WeatherArticleResponseDto | undefined = this.serviceCache.get(
+		const cachedArticle = this.getCachedArticle<WeatherArticleResponseDto>(
 			locationInfo.Key,
+			weatherArticleRequest,
+			language,
 		);
 		if (cachedArticle) {
 			return cachedArticle;
@@ -63,11 +65,7 @@ export class WeatherArticleService {
 			language,
 		);
 
-		try {
-			this.serviceCache.set(locationInfo.Key, article);
-		} catch (e) {
-			LOG.error(`Failed to cache article for location: ${locationInfo.Key}`, e);
-		}
+		this.cacheArticle(locationInfo.Key, weatherArticleRequest, language, article);
 
 		return article;
 	}
@@ -76,5 +74,30 @@ export class WeatherArticleService {
 		_weatherArticleRequest: WeatherArticleRequestDto,
 	): Promise<string[]> {
 		return await Promise.resolve(['Weather article 1', 'Weather article 2']);
+	}
+
+	private getCachedArticle<T>(
+		locationKey: string,
+		requestInfo: WeatherArticleRequestDto,
+		language: Language,
+	): T | undefined {
+		const keyToSearchFor = `${locationKey}-${requestInfo.article.type}-${language}`;
+
+		return this.serviceCache.get<T>(keyToSearchFor);
+	}
+
+	private cacheArticle<T>(
+		locationKey: string,
+		requestInfo: WeatherArticleRequestDto,
+		language: Language,
+		article: WeatherArticleResponseDto,
+	): void {
+		const keyToCache = `${locationKey}-${requestInfo.article.type}-${language}`;
+
+		try {
+			this.serviceCache.set(keyToCache, article);
+		} catch (e) {
+			LOG.error(`Failed to cache article for location: ${locationKey}`, e);
+		}
 	}
 }

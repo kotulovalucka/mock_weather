@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes';
 import { APP_CONFIG } from '../config.ts';
 import LOG from '../log/default_logger.ts';
-import type { LocationSearchResponseDto } from '../model/dto/response/forecastApi/location_search.dto.ts';
-import type { LocationWeatherResponseDto } from '../model/dto/response/forecastApi/location_weather.dto.ts';
+import type { LocationSearchResponseDto } from '../model/dto/response/forecast_api/location_search.dto.ts';
+import type { LocationWeatherResponseDto } from '../model/dto/response/forecast_api/location_weather.dto.ts';
 import { WeatherServiceCommonError } from '../model/error/weather_service_common_error.ts';
 import type { WeatherClientMockConfig } from '../model/types/weather_client_mock_config.ts';
 import { LocationSearchResponseSchema } from '../schema/client/location_search_response_schema.ts';

@@ -6,14 +6,8 @@ services:
     image: weather-image
     ports:
       - '3000:3000'
-    environment:
-      - PORT=3000
-      - DENO_ENV=development
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_USER=${DB_USER}
-      - DB_PASSWORD=${DB_PASSWORD}
-      - DB_NAME=${DB_NAME}
+    env_file:
+      - .env
     volumes:
       - .:/app
     depends_on:
