@@ -4,38 +4,52 @@ import LOG from '../log/default_logger.ts';
 
 export class LLMArticleRepository {
 	private repository: Repository<LLMArticleEntity>;
+	private static instance: LLMArticleRepository;
 
-	constructor(dataSource: DataSource) {
+	private constructor(dataSource: DataSource) {
 		this.repository = dataSource.getRepository(LLMArticleEntity);
 	}
 
-	async insertArticle(articleData: Partial<LLMArticleEntity>): Promise<LLMArticleEntity> {
+	public static getInstance(dataSource: DataSource | null = null): LLMArticleRepository {
+		if (!LLMArticleRepository.instance && dataSource) {
+			LLMArticleRepository.instance = new LLMArticleRepository(dataSource);
+		} else if (!LLMArticleRepository.instance && !dataSource) {
+			throw new Error('Data source is not defined');
+		}
+		return LLMArticleRepository.instance;
+	}
+	/**
+	 * If the article already exists it updates the data otherwise inserts a new article.
+	 * @param articleData
+	 * @returns
+	 */
+	public async upsertArticle(articleData: Partial<LLMArticleEntity>): Promise<LLMArticleEntity> {
 		try {
-			const article = this.repository.create(articleData);
-			const savedArticle = await this.repository.save(article);
-			LOG.info(`Article with locationKey ${articleData.locationKey} inserted successfully`);
+			const result = await this.repository.createQueryBuilder()
+				.insert()
+				.into(LLMArticleEntity)
+				.values({
+					...articleData,
+					modifiedAt: new Date(),
+					createdAt: new Date(),
+				})
+				.orUpdate(
+					[
+						'title',
+						'perex',
+						'description',
+						'modified_at',
+					],
+					['location_key', 'language', 'article_type'],
+				)
+				.returning('*')
+				.execute();
+
+			const savedArticle = result.generatedMaps[0] as LLMArticleEntity;
+			LOG.info(`Article with locationKey ${articleData.locationKey} upserted successfully`);
 			return savedArticle;
 		} catch (error) {
-			LOG.error('Failed to insert article:', error);
-			throw error;
-		}
-	}
-
-	async updateArticle(
-		id: number,
-		updateData: Partial<LLMArticleEntity>,
-	): Promise<LLMArticleEntity | null> {
-		try {
-			const article = await this.repository.findOne({ where: { id } });
-			if (!article) {
-				LOG.warn(`Article with ID ${id} not found`);
-				return null;
-			}
-			const updatedArticle = await this.repository.save({ ...article, ...updateData });
-			LOG.info('Article updated successfully');
-			return updatedArticle;
-		} catch (error) {
-			LOG.error('Failed to update article:', error);
+			LOG.error('Failed to upsert article:', error);
 			throw error;
 		}
 	}

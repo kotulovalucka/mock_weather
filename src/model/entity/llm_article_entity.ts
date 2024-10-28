@@ -1,5 +1,7 @@
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './default_entity.ts';
+import { Language } from '../enum/language.ts';
+import { ArticleType } from '../enum/article_type.ts';
 
 @Entity({ name: 'LLMArticle' })
 export class LLMArticleEntity extends BaseEntity {
@@ -8,6 +10,12 @@ export class LLMArticleEntity extends BaseEntity {
 
 	@Column({ length: 256, type: 'varchar', nullable: false })
 	title: string;
+
+	@Column({ name: 'language', enum: Language, type: 'enum', nullable: false })
+	language: Language;
+
+	@Column({ name: 'article_type', enum: ArticleType, type: 'enum', nullable: false })
+	articleType: ArticleType;
 
 	@Column({ length: 256, type: 'varchar', nullable: false })
 	perex: string;

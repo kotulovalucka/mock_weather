@@ -6,11 +6,16 @@ import type { WeatherArticleRequestDto } from '../model/dto/request/weather_arti
 import type { WeatherArticleResponseDto } from '../model/dto/response/weather_article_response.dto.ts';
 import { Language } from '../model/enum/language.ts';
 import NodeCache from 'npm:node-cache';
+import { LLMArticleAuditRepository } from '../repository/llm_article_audit_repository.ts';
+import { mapToLLMArticleEntity } from '../mapper/to_llm_article_entity.ts';
+import { LLMArticleRepository } from '../repository/llm_article_repository.ts';
 
 export class WeatherArticleService {
 	private static instance: WeatherArticleService | undefined;
 	private weatherClientInstance = WeatherClient.getInstance();
 	private LLMClientInstance = LLMClient.getInstance();
+	private llmArticleRepository = LLMArticleRepository.getInstance();
+	private llmArticleAuditRepository = LLMArticleAuditRepository.getInstance();
 
 	private serviceCache = new NodeCache({
 		stdTTL: APP_CONFIG.cache.article.ttl,
@@ -66,6 +71,7 @@ export class WeatherArticleService {
 		);
 
 		this.cacheArticle(locationInfo.Key, weatherArticleRequest, language, article);
+		this.upsertArticle(weatherArticleRequest, language, article, locationInfo.Key);
 
 		return article;
 	}
@@ -74,6 +80,20 @@ export class WeatherArticleService {
 		_weatherArticleRequest: WeatherArticleRequestDto,
 	): Promise<string[]> {
 		return await Promise.resolve(['Weather article 1', 'Weather article 2']);
+	}
+
+	private async upsertArticle(
+		weatherArticleRequest: WeatherArticleRequestDto,
+		language: Language,
+		article: WeatherArticleResponseDto,
+		locationKey: string,
+	): Promise<void> {
+		try {
+			const entity = mapToLLMArticleEntity(weatherArticleRequest, language, article, locationKey);
+			const _result = await this.llmArticleRepository.upsertArticle(entity);
+		} catch (e) {
+			LOG.error(`Failed to upsert article for location: ${locationKey}`, e);
+		}
 	}
 
 	private getCachedArticle<T>(

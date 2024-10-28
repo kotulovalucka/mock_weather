@@ -1,6 +1,9 @@
 import { DataSource, Repository } from 'typeorm';
 import { AuditEntity } from '../model/entity/audit_entity.ts';
 import LOG from '../log/default_logger.ts';
+import { WeatherServiceCommonError } from '../model/error/weather_service_common_error.ts';
+import { StatusCodes } from 'http-status-codes';
+import * as localizationUtil from '../util/localization.ts';
 
 export class LLMArticleAuditRepository {
 	private repository: Repository<AuditEntity>;
@@ -10,9 +13,16 @@ export class LLMArticleAuditRepository {
 		this.repository = dataSource.getRepository(AuditEntity);
 	}
 
-	public static getInstance(dataSource: DataSource): LLMArticleAuditRepository {
-		if (!LLMArticleAuditRepository.instance) {
+	public static getInstance(dataSource: DataSource | null = null): LLMArticleAuditRepository {
+		if (!LLMArticleAuditRepository.instance && dataSource) {
 			LLMArticleAuditRepository.instance = new LLMArticleAuditRepository(dataSource);
+		} else if (!LLMArticleAuditRepository.instance && !dataSource) {
+			throw new WeatherServiceCommonError(
+				StatusCodes.INTERNAL_SERVER_ERROR,
+				localizationUtil.getTranslation(
+					'weatherServiceGeneralMessages.unknownErrorDuringIntialization',
+				),
+			);
 		}
 		return LLMArticleAuditRepository.instance;
 	}

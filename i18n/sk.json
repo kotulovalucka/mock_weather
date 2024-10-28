@@ -29,6 +29,9 @@
 			"parse": "Nebolo možné vygenerovať článok kvôli nekonzistentným dátam"
 		}
 	},
+	"weatherServiceGeneralMessages": {
+		"unknownErrorDuringIntialization": "Počas inicializácie služby počasia sa vyskytla neznáma chyba."
+	},
 	"test": {
 		"test1": "Test1 sk",
 		"test2": "Test2 sk",

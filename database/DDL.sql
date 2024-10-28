@@ -1,5 +1,7 @@
 -- Create custom enum type
 CREATE TYPE RevType AS ENUM ('delete', 'insert', 'update');
+CREATE TYPE LanguageType AS ENUM ('sk', 'en');
+CREATE TYPE ArticleType AS ENUM ('bulvar', 'factual');
 
 BEGIN;
 
@@ -11,10 +13,12 @@ CREATE TABLE IF NOT EXISTS public."LLMArticle"
     title character varying(256) COLLATE pg_catalog."default" NOT NULL,
     perex character varying(256) COLLATE pg_catalog."default" NOT NULL,
     description character varying(2560) COLLATE pg_catalog."default" NOT NULL,
+    language LanguageType NOT NULL,
+    article_type ArticleType NOT NULL,
     modified_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT "LLMArticle_pkey" PRIMARY KEY (id),
-    CONSTRAINT "LLMArticle_location_key_key" UNIQUE (location_key)
+    CONSTRAINT "LLMArticle_composite_key" UNIQUE (location_key, language, article_type)
 );
 
 -- Create audit table
@@ -26,6 +30,8 @@ CREATE TABLE IF NOT EXISTS public."LLMArticleAudit"
     title character varying(256) COLLATE pg_catalog."default" NOT NULL,
     perex character varying(512) COLLATE pg_catalog."default" NOT NULL,
     description character varying(2560) COLLATE pg_catalog."default" NOT NULL,
+    language LanguageType NOT NULL,
+    article_type ArticleType NOT NULL,
     modified_at timestamp with time zone NOT NULL,
     created_at timestamp with time zone NOT NULL,
     rev_type RevType NOT NULL,
@@ -47,7 +53,9 @@ BEGIN
         description,
         modified_at,
         created_at,
-        rev_type
+        rev_type,
+        language,
+        article_type
     )
     VALUES (
         NEW.id,
@@ -57,7 +65,9 @@ BEGIN
         NEW.description,
         NEW.modified_at,
         NEW.created_at,
-        'insert'::RevType  
+        'insert'::RevType,
+        NEW.language,
+        NEW.article_type
     );
     RETURN NEW;
 END;
@@ -81,7 +91,9 @@ BEGIN
         description,
         modified_at,
         created_at,
-        rev_type
+        rev_type,
+        language,
+        article_type
     )
     VALUES (
         NEW.id,
@@ -91,7 +103,9 @@ BEGIN
         NEW.description,
         NEW.modified_at,
         NEW.created_at,
-        'update'::RevType
+        'update'::RevType,
+        NEW.language,
+        NEW.article_type
     );
     RETURN NEW;
 END;

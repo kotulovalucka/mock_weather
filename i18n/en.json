@@ -29,6 +29,9 @@
 			"parse": "It was not possible to generate article due to incositent data"
 		}
 	},
+	"weatherServiceGeneralMessages": {
+		"unknownErrorDuringIntialization": "An unknown error occurred during the initialization of the weather service."
+	},
 	"test": {
 		"test1": "Test1 en",
 		"test2": "Test2 en",

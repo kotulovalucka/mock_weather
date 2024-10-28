@@ -29,4 +29,5 @@ export async function initializeORM() {
 		LOG.error('Failed to establish database connection:', error);
 		process.exit(1); // Exit process if the database connection fails
 	}
+	return ORM_CONFIG;
 }
