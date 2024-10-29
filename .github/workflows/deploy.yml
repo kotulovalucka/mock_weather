@@ -1,0 +1,55 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    environment: production
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .dockerenv file
+        run: |
+          echo "${{ secrets.PROD_ENV_FILE }}" > .dockerenv
+
+      - name: Build and start services
+        run: |
+          # Stop any running containers
+          docker-compose down --remove-orphans
+
+          # Remove old images to prevent disk space issues
+          docker image prune -f
+
+          # Build and start services
+          docker-compose build --no-cache
+          docker-compose up -d
+
+          # Check logs for potential errors
+          docker-compose logs
+
+          # Verify services are running
+          docker-compose ps
+
+      - name: Health check
+        run: |
+          # Wait for PostgreSQL to be ready
+          timeout=300
+          until docker-compose exec -T postgres pg_isready -U ${DB_USER} -d ${DB_NAME} || [ $timeout -eq 0 ]; do
+            echo "Waiting for PostgreSQL to be ready..."
+            sleep 5
+            ((timeout--))
+          done
+
+          # Check if the API is responding
+          timeout=60
+          until curl -f http://localhost:3000/api/v1/health/status || [ $timeout -eq 0 ]; do
+            echo "Waiting for API to be ready..."
+            sleep 5
+            ((timeout--))
+          done
