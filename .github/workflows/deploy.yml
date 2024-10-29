@@ -95,7 +95,7 @@ jobs:
           
           # Check API
           timeout=60
-          until curl -f http://localhost:3000/health || [ $timeout -eq 0 ]; do
+          until curl -f http://localhost:3000/api/v1/health/status || [ $timeout -eq 0 ]; do
             echo "Waiting for API..."
             sleep 5
             ((timeout--))
