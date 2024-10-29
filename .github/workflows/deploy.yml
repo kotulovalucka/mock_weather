@@ -1,7 +1,7 @@
 name: Deploy to EC2
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
@@ -65,11 +65,11 @@ jobs:
       - name: Build and start services
         run: |
           sudo chown -R $USER:$USER /var/run/docker.sock || true
-          
+
           set -a
           source .dockerenv
           set +a
-          
+
           # If database doesn't exist or needs initialization, do a full rebuild
           if [ "${{ steps.check-db.outputs.db_exists }}" = "false" ]; then
             echo "Performing full deployment with database initialization..."
@@ -86,14 +86,14 @@ jobs:
             # Start updated API container
             docker-compose up -d weather-api
           fi
-          
+
           docker-compose ps
 
       - name: Health check
         run: |
           export DB_USER=${{ env.DB_USER }}
           export DB_NAME=${{ env.DB_NAME }}
-          
+
           # Wait for PostgreSQL
           timeout=300
           until docker-compose exec -T postgres pg_isready -U "$DB_USER" -d "$DB_NAME" || [ $timeout -eq 0 ]; do
@@ -101,13 +101,13 @@ jobs:
             sleep 5
             ((timeout--))
           done
-          
+
           if [ $timeout -eq 0 ]; then
             echo "PostgreSQL failed to become ready"
             docker-compose logs postgres
             exit 1
           fi
-          
+
           # Check if database needs verification after initialization
           if [ "${{ steps.check-db.outputs.db_exists }}" = "false" ]; then
             echo "Verifying database initialization..."
@@ -120,7 +120,7 @@ jobs:
               exit 1
             fi
           fi
-          
+
           # Check API
           timeout=60
           until curl -f http://localhost:3000/api/v1/health/status || [ $timeout -eq 0 ]; do

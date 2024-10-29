@@ -129,13 +129,20 @@ export class LLMClient {
 			The article should be output in the following JSON structure:
 			- "headline": A short, engaging headline summarizing the overall forecast (max 80 characters).
 			- "perex": A brief introductory sentence about the forecast, including date and general weather outlook (1-2 sentences).
-			- "description": A detailed section that includes:
+			- "description": 
+			 For factual type we need a detailed section that includes:
 				* Temperature range (minimum and maximum, with real-feel temperatures if provided).
-				* Chance of rain, snow, or other precipitation events.
+				* Chance of rain, snow, or other precipitation events. When the chance is bellow between 0 - 25%, it should be omitted. If the chance is between 25 - 50% mention that there is some chance. If the chance is above 50% mention that there is a high chance of precipitation. 
 				* Expected hours of sun during the day.
 				* Wind speed, direction, and other notable conditions (e.g., cloud cover, humidity levels) for both day and night.
 				* Information about air quality or pollen levels if available.
+			  For bulvar type we need more personal and engaging style with suggestions for activities, clothing, or other lifestyle tips.:
+			    * Average temperature
+			  	* Based on chance tell the user if they should bring an umbrella or not
+				* Suggest if the user can go fly a kite or not or some other activity
+				* Air quality can be ommited for this style
 			- "location": The name and country of the location.
+			  
 	
 			The "description" should detail the forecast, breaking down day and night separately, including:
 			* "Day": Conditions like temperature, precipitation probability, wind speed, cloud cover, and humidity.
@@ -143,7 +150,7 @@ export class LLMClient {
 	
 			Ensure the description is comprehensive, formatted in complete sentences, and captures all critical weather conditions for readers. The temperature should include both the actual temperature and the real-feel temperature.
 	
-			Example JSON Output:
+			Example JSON Output (it must be in this format all the time):
 			{
 				"headline": "Warm weather expected from Monday to Tuesday in Podbrezova, Slovakia",
 				"perex": "The forecast for Podbrezova on Monday and Tuesday suggests mild temperatures with a chance of rain.",
@@ -152,11 +159,10 @@ export class LLMClient {
 			}
 	
 			Important Instructions:
-			- Always extract and display the forecast from this starting date point: (${currentDateTime})".
-			- Refer to temperature and real-feel temperatures in the description.
-			- Include precipitation probabilities (if above 0%) and hours of sun.
+			- Always extract and display the forecast for which date the forecast is, it must be this or after this date point: (${currentDateTime})".
+			- Try to get forecast for the nearest future date from the current date.
 			- Describe conditions separately for day and night, as provided in "Day" and "Night" fields of the weather forecast.
-			- Keep the language professional and direct, as if writing for a general news report audience.
+			- If speaking in slovak, use correct diacritics.
 			`;
 
 		return prompt;
