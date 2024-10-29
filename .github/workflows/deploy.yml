@@ -1,5 +1,4 @@
 name: Deploy to EC2
-
 on:
   push:
     branches: [ main ]
@@ -9,7 +8,6 @@ jobs:
   deploy:
     runs-on: self-hosted
     environment: production
-
     steps:
       - name: Clean workspace
         run: |
@@ -22,16 +20,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          clean: false  # Disable automatic cleaning
+          clean: false
           fetch-depth: 1
 
       - name: Set permissions
         run: |
-          # Set proper ownership and permissions after checkout
           sudo chown -R $USER:$USER .
           chmod -R 755 .
-          
-          # Ensure logs directory exists with proper permissions
           mkdir -p logs/app
           chmod -R 777 logs
 
@@ -45,33 +40,53 @@ jobs:
           set -a
           source .dockerenv
           set +a
-          
-          # Store variables for subsequent steps
           echo "DB_USER=$DB_USER" >> $GITHUB_ENV
           echo "DB_PASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
           echo "DB_NAME=$DB_NAME" >> $GITHUB_ENV
 
+      - name: Check if database exists and is initialized
+        id: check-db
+        run: |
+          # Check if Docker volume exists
+          if docker volume ls | grep postgres_data; then
+            # Check if database is accessible and has tables
+            if docker-compose exec -T postgres psql -U "$DB_USER" -d "$DB_NAME" -c "\dt" 2>/dev/null | grep -q 'LLMArticle'; then
+              echo "Database already exists and is initialized"
+              echo "db_exists=true" >> $GITHUB_OUTPUT
+            else
+              echo "Database exists but needs initialization"
+              echo "db_exists=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "Database volume doesn't exist"
+            echo "db_exists=false" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build and start services
         run: |
-          # Ensure Docker has right permissions
           sudo chown -R $USER:$USER /var/run/docker.sock || true
           
-          # Load env variables
           set -a
           source .dockerenv
           set +a
           
-          # Stop any running containers
-          docker-compose down --remove-orphans || true
+          # If database doesn't exist or needs initialization, do a full rebuild
+          if [ "${{ steps.check-db.outputs.db_exists }}" = "false" ]; then
+            echo "Performing full deployment with database initialization..."
+            docker-compose down --volumes --remove-orphans
+            docker image prune -f
+            docker-compose build --no-cache
+            docker-compose up -d
+          else
+            echo "Updating application only, preserving database..."
+            # Stop only the API container
+            docker-compose stop weather-api
+            # Remove old API image
+            docker-compose build weather-api --no-cache
+            # Start updated API container
+            docker-compose up -d weather-api
+          fi
           
-          # Remove old images
-          docker image prune -f
-          
-          # Build and start services
-          docker-compose build --no-cache
-          docker-compose up -d
-          
-          # Show running containers
           docker-compose ps
 
       - name: Health check
@@ -91,6 +106,19 @@ jobs:
             echo "PostgreSQL failed to become ready"
             docker-compose logs postgres
             exit 1
+          fi
+          
+          # Check if database needs verification after initialization
+          if [ "${{ steps.check-db.outputs.db_exists }}" = "false" ]; then
+            echo "Verifying database initialization..."
+            # Wait a bit for DDL to be applied
+            sleep 10
+            # Verify tables exist
+            if ! docker-compose exec -T postgres psql -U "$DB_USER" -d "$DB_NAME" -c "\dt" | grep -q 'LLMArticle'; then
+              echo "Database initialization failed - tables not created"
+              docker-compose logs postgres
+              exit 1
+            fi
           fi
           
           # Check API
