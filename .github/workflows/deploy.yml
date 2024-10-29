@@ -18,38 +18,79 @@ jobs:
         run: |
           echo "${{ secrets.PROD_ENV_FILE }}" > .dockerenv
 
+      - name: Load environment variables
+        run: |
+          # Export environment variables from .dockerenv
+          set -a
+          source .dockerenv
+          set +a
+
+          # Verify environment variables are set
+          echo "DB_USER is set to: $DB_USER"
+          echo "DB_NAME is set to: $DB_NAME"
+
+          # Store variables for subsequent steps
+          echo "DB_USER=$DB_USER" >> $GITHUB_ENV
+          echo "DB_PASSWORD=$DB_PASSWORD" >> $GITHUB_ENV
+          echo "DB_NAME=$DB_NAME" >> $GITHUB_ENV
+
       - name: Build and start services
         run: |
+          # Load env variables for docker-compose
+          set -a
+          source .dockerenv
+          set +a
+
           # Stop any running containers
           docker-compose down --remove-orphans
 
-          # Remove old images to prevent disk space issues
+          # Remove old images
           docker image prune -f
 
           # Build and start services
           docker-compose build --no-cache
           docker-compose up -d
 
-          # Check logs for potential errors
-          docker-compose logs
-
-          # Verify services are running
+          # Show running containers
           docker-compose ps
 
       - name: Health check
         run: |
+          # Export variables for the health check
+          export DB_USER=${{ env.DB_USER }}
+          export DB_NAME=${{ env.DB_NAME }}
+
           # Wait for PostgreSQL to be ready
+          echo "Checking PostgreSQL connection with user: $DB_USER and database: $DB_NAME"
           timeout=300
-          until docker-compose exec -T postgres pg_isready -U ${DB_USER} -d ${DB_NAME} || [ $timeout -eq 0 ]; do
+          until docker-compose exec -T postgres pg_isready -U "$DB_USER" -d "$DB_NAME" || [ $timeout -eq 0 ]; do
             echo "Waiting for PostgreSQL to be ready..."
             sleep 5
             ((timeout--))
           done
 
+          if [ $timeout -eq 0 ]; then
+            echo "PostgreSQL failed to become ready"
+            docker-compose logs postgres
+            exit 1
+          fi
+
           # Check if the API is responding
           timeout=60
-          until curl -f http://localhost:3000/api/v1/health/status || [ $timeout -eq 0 ]; do
+          until curl -f http://localhost:3000/health || [ $timeout -eq 0 ]; do
             echo "Waiting for API to be ready..."
             sleep 5
             ((timeout--))
           done
+
+          if [ $timeout -eq 0 ]; then
+            echo "API failed to become ready"
+            docker-compose logs weather-api
+            exit 1
+          fi
+
+      - name: Show logs on completion
+        if: always()
+        run: |
+          echo "Docker Compose Logs:"
+          docker-compose logs
